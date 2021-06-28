@@ -1,0 +1,20 @@
+{
+  "name": "@baked/snowflakes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "watch": "tsc -w",
+    "build": "tsc -p tsconfig.json",
+    "publish": "npm run build && npm publish"
+  },
+  "author": "baked-dev",
+  "license": "ISC",
+  "dependencies": {
+    "js-sha1": "^0.6.0"
+  },
+  "devDependencies": {
+    "jest": "^27.0.5"
+  }
+}
