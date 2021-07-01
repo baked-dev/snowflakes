@@ -1,4 +1,4 @@
-import sha1 from 'js-sha1';
+import sha1 from "js-sha1";
 
 export interface SnowflakeData {
   type: string;
@@ -13,14 +13,17 @@ class Snowflakes {
   private epoch: number = 1618868000000;
   private seq: number = 0;
 
-  public constructor (private signing_key: string, private node_id: number = 1023) {}
+  public constructor(
+    private signing_key: string,
+    private node_id: number = 1023
+  ) {}
 
   private sign = (type: string, ...payloads: string[]) =>
     sha1(
-        `${payloads.reduce((acc, val) => acc + val, "")}${
-          this.signing_key
-        }${type}`
-      )
+      `${payloads.reduce((acc, val) => acc + val, "")}${
+        this.signing_key
+      }${type}`
+    )
       .substr(0, payloads[0].length)
       .substr(0, payloads[0].length)
       .split("")
@@ -41,8 +44,10 @@ class Snowflakes {
     const parsed_parent = parent ? this.read(parent) : undefined;
 
     const bin = `${(ts - this.epoch).toString(2).padStart(48, "0")}${(
-      this.node_id >>> 0
-    ).toString(2)}${(this.seq).toString(2).padStart(12, "0")}`;
+      this.node_id & 1023
+    )
+      .toString(2)
+      .padStart(10, "0")}${this.seq.toString(2).padStart(12, "0")}`;
 
     const final = parseInt(bin, 2).toString(16);
 
@@ -52,7 +57,7 @@ class Snowflakes {
       args.push(parsed_parent.data.split("").reverse().join(""));
 
     return `${type}_${this.sign(type, ...args)}`;
-  }
+  };
 
   public verify = (snowflake: string): SnowflakeData | false => {
     const result = this.read(snowflake);
@@ -61,10 +66,11 @@ class Snowflakes {
     const { sig, data, parents_data, type } = result;
 
     const computed_hash = sha1(
-        `${[data, ...parents_data.map(str => str.split('').reverse().join(''))].reduce((acc, val) => acc + val, "")}${
-          this.signing_key
-        }${type}`
-      );
+      `${[
+        data,
+        ...parents_data.map((str) => str.split("").reverse().join("")),
+      ].reduce((acc, val) => acc + val, "")}${this.signing_key}${type}`
+    );
 
     if (!computed_hash.startsWith(sig))
       throw new Error("Could not verify snowflake integrity.");
