@@ -1,4 +1,7 @@
-import sha1 from "js-sha1";
+import { createHash } from "crypto";
+
+const sha1_2 = (data: string) =>
+  createHash("sha256").update(data).digest("hex");
 
 export interface SnowflakeData {
   type: string;
@@ -18,8 +21,8 @@ class Snowflakes {
     private node_id: number = 1023
   ) {}
 
-  private sign = (type: string, ...payloads: string[]) =>
-    sha1(
+  public sign = (type: string, ...payloads: string[]) =>
+    sha1_2(
       `${payloads.reduce((acc, val) => acc + val, "")}${
         this.signing_key
       }${type}`
@@ -65,7 +68,7 @@ class Snowflakes {
 
     const { sig, data, parents_data, type } = result;
 
-    const computed_hash = sha1(
+    const computed_hash = sha1_2(
       `${[
         data,
         ...parents_data.map((str) => str.split("").reverse().join("")),

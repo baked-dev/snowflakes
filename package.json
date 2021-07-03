@@ -12,7 +12,6 @@
   "author": "baked-dev",
   "license": "ISC",
   "dependencies": {
-    "js-sha1": "^0.6.0"
   },
   "devDependencies": {
     "jest": "^27.0.5"
