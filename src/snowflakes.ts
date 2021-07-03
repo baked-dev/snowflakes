@@ -9,7 +9,7 @@ export interface SnowflakeData {
   sig: string;
   ts: Date;
   data: string;
-  parents_data?: string[];
+  parents_data: string[];
 }
 
 class Snowflakes {
@@ -56,8 +56,14 @@ class Snowflakes {
 
     const args = [final];
 
-    if (parsed_parent)
+    if (parsed_parent) {
       args.push(parsed_parent.data.split("").reverse().join(""));
+      args.push(
+        ...parsed_parent.parents_data.map((parent_data) =>
+          parent_data.split("").reverse().join("")
+        )
+      );
+    }
 
     return `${type}_${this.sign(type, ...args)}`;
   };
@@ -126,7 +132,13 @@ class Snowflakes {
   };
 
   public getParent = (data: SnowflakeData, type: string) =>
-    `${type}_${this.sign(type, data.parents_data[0])}`;
+    `${type}_${this.sign(
+      type,
+      data.parents_data.shift(),
+      ...data.parents_data.map((parent_data) =>
+        parent_data.split("").reverse().join("")
+      )
+    )}`;
 
   private parse = (data: string): string[] =>
     data.split("").reduce((acc, val, idx) => {

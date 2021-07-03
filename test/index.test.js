@@ -23,6 +23,23 @@ test('recreates parent flake from child successfully', () => {
   expect(recreated_parent).toBe(parent_flake);
 });
 
+test('recreates parent flake from nested child successfully', () => {
+  const parent_flake = flakes.gen('test_parent');
+  const child_flake = flakes.gen('test_child', parent_flake);
+  const nested_child_flake = flakes.gen('test_nested_child', child_flake);
+
+  const nested_child = flakes.verify(nested_child_flake);
+
+  const recreated_child_flake = flakes.getParent(nested_child, 'test_child');
+
+  const recreated_child = flakes.verify(recreated_child_flake);
+
+  const recreated_parent_flake = flakes.getParent(recreated_child, 'test_parent');
+
+  expect(recreated_parent_flake).toBe(parent_flake);
+  expect(recreated_child_flake).toBe(child_flake);
+});
+
 test('confirms the timestamps are read correctly', () => {
   const ts = Date.now();
   const flake = flakes.gen('test', undefined, ts);
