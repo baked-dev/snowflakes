@@ -48,3 +48,20 @@ test('confirms the timestamps are read correctly', () => {
 
   expect(new Date(data.ts).getTime()).toBe(ts);
 })
+
+test('confirms elixir flakes are read correctly', () => {
+  const parent_flake = 'test_45ef3bc731ecbab0e3cf0f7040b0';
+  const child_flake = 'test_2504f08b0c7f21f4c3aa070a97c7f1ef7f0be0f315';
+  const nested_child_flake = 'test_35104f009b00d7ff01ff4c73ea00b0aae7cc2f113f7730bba0ffa255';
+
+  const nested_child = flakes.verify(nested_child_flake);
+
+  const recreated_child_flake = flakes.getParent(nested_child, 'test');
+
+  const recreated_child = flakes.verify(recreated_child_flake);
+
+  const recreated_parent_flake = flakes.getParent(recreated_child, 'test');
+
+  expect(recreated_parent_flake).toBe(parent_flake);
+  expect(recreated_child_flake).toBe(child_flake);
+})
