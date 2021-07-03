@@ -27,6 +27,7 @@ test('recreates parent flake from nested child successfully', () => {
   const parent_flake = flakes.gen('test_parent');
   const child_flake = flakes.gen('test_child', parent_flake);
   const nested_child_flake = flakes.gen('test_nested_child', child_flake);
+  console.log(parent_flake, child_flake, nested_child_flake)
 
   const nested_child = flakes.verify(nested_child_flake);
 
@@ -50,17 +51,18 @@ test('confirms the timestamps are read correctly', () => {
 })
 
 test('confirms elixir flakes are read correctly', () => {
-  const parent_flake = 'test_45ef3bc731ecbab0e3cf0f7040b0';
-  const child_flake = 'test_2504f08b0c7f21f4c3aa070a97c7f1ef7f0be0f315';
-  const nested_child_flake = 'test_35104f009b00d7ff01ff4c73ea00b0aae7cc2f113f7730bba0ffa255';
+  // these snowflakes were generated in elixir
+  const parent_flake = 'test_parent_254fbb1e371e544567cf9f307040';
+  const child_flake = 'test_child_e50ef02b07eff7f6e7b4539417e6f7afeb0b00fb15';
+  const nested_child_flake = 'test_nested_child_e5152f0f6b0b9efe67f7ee7e449419459be71f7fcfefc0b000f0d250';
 
   const nested_child = flakes.verify(nested_child_flake);
 
-  const recreated_child_flake = flakes.getParent(nested_child, 'test');
+  const recreated_child_flake = flakes.getParent(nested_child, 'test_child');
 
   const recreated_child = flakes.verify(recreated_child_flake);
 
-  const recreated_parent_flake = flakes.getParent(recreated_child, 'test');
+  const recreated_parent_flake = flakes.getParent(recreated_child, 'test_parent');
 
   expect(recreated_parent_flake).toBe(parent_flake);
   expect(recreated_child_flake).toBe(child_flake);

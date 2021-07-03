@@ -57,10 +57,12 @@ class Snowflakes {
     const args = [final];
 
     if (parsed_parent) {
-      args.push(parsed_parent.data.split("").reverse().join(""));
       args.push(
-        ...parsed_parent.parents_data.map((parent_data) =>
-          parent_data.split("").reverse().join("")
+        ...[parsed_parent.data, ...parsed_parent.parents_data].map(
+          (parent_data, idx) =>
+            idx % 2 === 1
+              ? parent_data
+              : parent_data.split("").reverse().join("")
         )
       );
     }
@@ -77,7 +79,9 @@ class Snowflakes {
     const computed_hash = sha1_2(
       `${[
         data,
-        ...parents_data.map((str) => str.split("").reverse().join("")),
+        ...parents_data.map((str, idx) =>
+          idx % 2 === 1 ? str : str.split("").reverse().join("")
+        ),
       ].reduce((acc, val) => acc + val, "")}${this.signing_key}${type}`
     );
 
@@ -121,8 +125,8 @@ class Snowflakes {
         seq,
         data,
         ts: new Date(ts),
-        parents_data: parents_data.map((data) =>
-          data.split("").reverse().join("")
+        parents_data: parents_data.map((data, idx) =>
+          idx % 2 === 1 ? data : data.split("").reverse().join("")
         ),
       };
     } catch (e) {
@@ -135,9 +139,11 @@ class Snowflakes {
     `${type}_${this.sign(
       type,
       data.parents_data.shift(),
-      ...data.parents_data.map((parent_data) =>
-        parent_data.split("").reverse().join("")
-      )
+      ...data.parents_data.map((parent_data, idx) => {
+        return idx % 2 === 1
+          ? parent_data
+          : parent_data.split("").reverse().join("");
+      })
     )}`;
 
   private parse = (data: string): string[] =>
