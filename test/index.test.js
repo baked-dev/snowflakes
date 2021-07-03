@@ -27,7 +27,6 @@ test('recreates parent flake from nested child successfully', () => {
   const parent_flake = flakes.gen('test_parent');
   const child_flake = flakes.gen('test_child', parent_flake);
   const nested_child_flake = flakes.gen('test_nested_child', child_flake);
-  console.log(parent_flake, child_flake, nested_child_flake)
 
   const nested_child = flakes.verify(nested_child_flake);
 
