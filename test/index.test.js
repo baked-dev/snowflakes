@@ -66,3 +66,22 @@ test('confirms elixir flakes are read correctly', () => {
   expect(recreated_parent_flake).toBe(parent_flake);
   expect(recreated_child_flake).toBe(child_flake);
 })
+
+test('confirms golang flakes are read correctly', () => {
+  // these snowflakes were generated in golang
+  const parent_flake = 'test_parent_d66f4a050ab53cf2837fdfb0c0c0';
+  const child_flake = 'test_child_f609f0ea0b5f8afe535c2b2c835bfa7f5c0ad0ff16';
+  const nested_child_flake = 'test_nested_child_c616bf0f9a0ac5f57afae5358c2c42c2b3531faf7f5f20a0d0f09260';
+
+  const nested_child = flakes.verify(nested_child_flake);
+
+  const recreated_child_flake = flakes.getParent(nested_child, 'test_child');
+
+  const recreated_child = flakes.verify(recreated_child_flake);
+
+  const recreated_parent_flake = flakes.getParent(recreated_child, 'test_parent');
+
+  expect(recreated_parent_flake).toBe(parent_flake);
+  expect(recreated_child_flake).toBe(child_flake);
+})
+

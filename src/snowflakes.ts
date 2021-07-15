@@ -1,8 +1,8 @@
 import { createHash } from "crypto";
 
-const sha1_2 = (data: string) =>
-  createHash("sha256").update(data).digest("hex");
-
+const sha1_2 = (data: string) => {
+  return createHash("sha256").update(data).digest("hex");
+};
 export interface SnowflakeData {
   type: string;
   seq: number;
@@ -52,7 +52,7 @@ class Snowflakes {
       .toString(2)
       .padStart(10, "0")}${this.seq.toString(2).padStart(12, "0")}`;
 
-    const final = parseInt(bin, 2).toString(16);
+    const final = BigInt("0b" + bin).toString(16);
 
     const args = [final];
 
@@ -92,7 +92,11 @@ class Snowflakes {
   };
 
   public parseHex = (hex: string) =>
-    this.parseBin(parseInt(hex, 16).toString(2).padStart(70, "0"));
+    this.parseBin(
+      BigInt("0x" + hex)
+        .toString(2)
+        .padStart(70, "0")
+    );
 
   public parseBin = (bin: string) => {
     const bin_ts = bin.substr(0, 48);
