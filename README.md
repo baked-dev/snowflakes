@@ -3,6 +3,7 @@
 compatible with:
 
 - (ex) https://github.com/baked-dev/ex-snowflakes
+- (go) https://github.com/baked-dev/go_snowflakes
 
 ## Usage
 
